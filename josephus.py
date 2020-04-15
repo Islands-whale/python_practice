@@ -46,6 +46,19 @@ class RingSort:
         self.id = 0
         self.step = 1
 
+    def __iter__(self):
+        """返回迭代器"""
+        return self
+
+    def __next__(self):
+        """返回下一个要抽取的Person对象"""
+        if len(self.people) == 0:
+            raise StopIteration
+
+        self.id = (self.id + self.step - 1) % len(self.people)
+        ret = self.people.pop(self.id)
+        return ret
+
     def reset(self, start, step):
         """设置起始位置和步进"""
         self.id = start - 1
@@ -55,15 +68,15 @@ class RingSort:
         """容器里添加Person对象"""
         self.people.append(target)
 
-    def next_yield(self):
-        """
-        创建生成器
-        每次返回一个要抽取的Person对象
-        """
-        for i in range(len(self.people)):
-            self.id = (self.id + self.step - 1) % len(self.people)
-            ret = self.people.pop(self.id)
-            yield ret
+    # def next_yield(self):
+    #     """
+    #     创建生成器
+    #     每次返回一个要抽取的Person对象
+    #     """
+    #     for i in range(len(self.people)):
+    #         self.id = (self.id + self.step - 1) % len(self.people)
+    #         ret = self.people.pop(self.id)
+    #         yield ret
 
 
 if __name__ == '__main__':
@@ -84,10 +97,8 @@ if __name__ == '__main__':
             raise IndexError("Out of range!")
 
         ring.reset(start, step)
-        final = ring.next_yield()
-
         print("\nThe sequence after sorting is:\n")
-        for i in range(len(ring.people)):
-            final.__next__().print_data()
+        for i in ring:
+            i.print_data()
 
 # *=====End File=====* #
