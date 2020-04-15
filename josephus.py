@@ -1,38 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-' Circular sorting module '
+' Josephus sorting module '
 
 __author__ = 'Chongsen Zhao'
-
-
-def cycle_sort(target, begin, step):
-    """ 对原列表重新排序生成新列表
-
-    在原列表中从指定位置开始，按照步进每次取出一个元素放入新列表
-    并把该元素从原列表中弹出，不参与下次排序
-
-    Args:
-        target: 原列表
-        begin: 起始位置
-        step: 步进
-
-    Returns:
-        排序后的新列表
-
-    Raises:
-        TypeError: An error occurred accessing wrong data type.
-        IndexError: An error occurred accessing invalid index.
-    """
-    pos = begin - 1
-    result = []
-
-    for i in range(len(target)):
-        pos = (pos + step - 1) % len(target)
-        result.append(target[pos])
-        target.pop(pos)
-
-    return result
 
 
 class Person:
@@ -55,34 +26,62 @@ class Person:
     #     print("name:", self.__name, ": destructor")
 
     def print_data(self):
-        """Export sales information."""
+        """Export person information."""
         print("name:", self.__name, "\tage:", self.__age)
+
+
+class RingSort:
+    """Summary of class here.
+
+    对约瑟夫环中的Person对象按照起始位置和步进依次抽取
+
+    Attributes:
+        people: 容器，元素为Person对象
+        id: 容器的索引
+        step: 步进
+    """
+    def __init__(self):
+        """constructor."""
+        self.people = []
+        self.id = 0
+        self.step = 1
+
+    def reset(self, start, step):
+        """设置起始位置和步进"""
+        self.id = start - 1
+        self.step = step
+
+    def append(self, target):
+        """容器里添加Person对象"""
+        self.people.append(target)
+
+    def next(self):
+        """返回下一个要抽取的Person对象"""
+        self.id = (self.id + self.step - 1) % len(self.people)
+        ret = self.people.pop(self.id)
+        return ret
 
 
 if __name__ == '__main__':
 
-    Person1 = Person("zhangsan", 30)
-    Person2 = Person("lisi", 35)
-    Person3 = Person("wangwu", 42)
-    Person4 = Person("zhouliu", 10)
-
-    original = [Person1, Person2, Person3, Person4]
-    print("\nThe sequence before sorting is:\n")
-    for i in range(len(original)):
-        original[i].print_data()
+    ring = RingSort()
+    ring.append(Person("Jorn", 25))
+    ring.append(Person("Tom", 30))
+    ring.append(Person("Jerry", 35))
+    ring.append(Person("Mike", 40))
 
     try:
-        begin = int(input("\nPlease input a starting position:"))
+        start = int(input("\nPlease input a starting position:"))
         step = int(input("Please input a step number:"))
     except ValueError:
         print("\nPlease input an integer!")
     else:
-        if begin <= 0 or begin > len(original) or step <= 0:
+        if start <= 0 or step <= 0:
             raise IndexError("Out of range!")
 
-        final = cycle_sort(original, begin, step)
+        ring.reset(start, step)
         print("\nThe sequence after sorting is:\n")
-        for i in range(len(final)):
-            final[i].print_data()
+        for i in range(len(ring.people)):
+            ring.next().print_data()
 
 # *=====End File=====* #
