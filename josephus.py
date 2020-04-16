@@ -5,6 +5,8 @@
 
 __author__ = 'Chongsen Zhao'
 
+from csv import reader
+
 
 class Person:
     """Summary of class here.
@@ -82,15 +84,24 @@ class RingSort:
 if __name__ == '__main__':
 
     ring = RingSort()
-    f_txt = open("people.txt")
-    for line in f_txt:
-        if line.count(',') != 1:
-            raise IOError("格式错误")
-        line = line.strip('\n')
-        name = line.split(',')[0]
-        age = line.split(',')[1]
+
+    f_csv = open("people.csv")
+    data = reader(f_csv)
+    for line in data:
+        name = line[0]
+        age = line[1]
         ring.append(Person(name, age))
-    f_txt.close()
+    f_csv.close()
+
+    # f_txt = open("people.txt")
+    # for line in f_txt:
+    #     if line.count(',') != 1:
+    #         raise IOError("格式错误")
+    #     line = line.strip('\n')
+    #     name = line.split(',')[0]
+    #     age = line.split(',')[1]
+    #     ring.append(Person(name, age))
+    # f_txt.close()
 
     try:
         start = int(input("\nPlease input a starting position:"))
