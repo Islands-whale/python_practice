@@ -82,10 +82,15 @@ class RingSort:
 if __name__ == '__main__':
 
     ring = RingSort()
-    ring.append(Person("Jorn", 25))
-    ring.append(Person("Tom", 30))
-    ring.append(Person("Jerry", 35))
-    ring.append(Person("Mike", 40))
+    f_txt = open("people.txt")
+    for line in f_txt:
+        if line.count(',') != 1:
+            raise IOError("格式错误")
+        line = line.strip('\n')
+        name = line.split(',')[0]
+        age = line.split(',')[1]
+        ring.append(Person(name, age))
+    f_txt.close()
 
     try:
         start = int(input("\nPlease input a starting position:"))
