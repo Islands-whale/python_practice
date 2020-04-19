@@ -6,6 +6,8 @@
 __author__ = 'Chongsen Zhao'
 
 from csv import reader
+from zipfile import ZipFile
+from io import TextIOWrapper
 
 
 class Person:
@@ -85,13 +87,23 @@ if __name__ == '__main__':
 
     ring = RingSort()
 
-    f_csv = open("people.csv")
+    f_zip = ZipFile('people.zip')
+    f_csv = TextIOWrapper(f_zip.open('people.csv'))
     data = reader(f_csv)
     for line in data:
         name = line[0]
         age = line[1]
         ring.append(Person(name, age))
     f_csv.close()
+    f_zip.close()
+
+    # f_csv = open("people.csv")
+    # data = reader(f_csv)
+    # for line in data:
+    #     name = line[0]
+    #     age = line[1]
+    #     ring.append(Person(name, age))
+    # f_csv.close()
 
     # f_txt = open("people.txt")
     # for line in f_txt:
