@@ -87,33 +87,29 @@ if __name__ == '__main__':
 
     ring = RingSort()
 
-    f_zip = ZipFile('people.zip')
-    f_csv = TextIOWrapper(f_zip.open('people.csv'))
-    data = reader(f_csv)
-    for line in data:
-        name = line[0]
-        age = line[1]
-        ring.append(Person(name, age))
-    f_csv.close()
-    f_zip.close()
+    with ZipFile('people.zip') as f_zip:
+        with TextIOWrapper(f_zip.open('people.csv')) as f_csv:
+            data = reader(f_csv)
+            for line in data:
+                name = line[0]
+                age = line[1]
+                ring.append(Person(name, age))
 
-    # f_csv = open("people.csv")
-    # data = reader(f_csv)
-    # for line in data:
-    #     name = line[0]
-    #     age = line[1]
-    #     ring.append(Person(name, age))
-    # f_csv.close()
+    # with open("people.csv") as f_csv:
+    #     data = reader(f_csv)
+    #     for line in data:
+    #         name = line[0]
+    #         age = line[1]
+    #         ring.append(Person(name, age))
 
-    # f_txt = open("people.txt")
-    # for line in f_txt:
-    #     if line.count(',') != 1:
-    #         raise IOError("格式错误")
-    #     line = line.strip('\n')
-    #     name = line.split(',')[0]
-    #     age = line.split(',')[1]
-    #     ring.append(Person(name, age))
-    # f_txt.close()
+    # with open("people.txt") as f_txt:
+    #     for line in f_txt:
+    #         if line.count(',') != 1:
+    #             raise IOError("格式错误")
+    #         line = line.strip('\n')
+    #         name = line.split(',')[0]
+    #         age = line.split(',')[1]
+    #         ring.append(Person(name, age))
 
     try:
         start = int(input("\nPlease input a starting position:"))
