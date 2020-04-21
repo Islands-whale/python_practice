@@ -8,6 +8,11 @@ __author__ = 'Chongsen Zhao'
 from csv import reader
 from zipfile import ZipFile
 from io import TextIOWrapper
+import os
+
+TXT = 0
+CSV = 1
+ZIP = 2
 
 
 class Person:
@@ -83,33 +88,75 @@ class RingSort:
     #         yield ret
 
 
+class ReadFile:
+    def __init__(self, path):
+        self.path = path
+
+    def get_type(self, path):
+        type = os.path.splitext(path)[-1]
+        if type == '.txt':
+            return TXT
+
+        if type == '.csv':
+            return CSV
+
+        if type == '.zip':
+            return ZIP
+
+    def read_txt(self):
+        result = []
+        with open(self.path) as f_txt:
+            for line in f_txt:
+                if line.count(',') != 1:
+                    raise IOError("格式错误")
+                result.append(line)
+        return result
+
+    def read_csv(self):
+        result = []
+        with open(self.path) as f_csv:
+            data = reader(f_csv)
+            for line in data:
+                result.append(line)
+        return result
+
+    def read_zip(self):
+        result = []
+        with ZipFile(self.path) as f_zip:
+            with TextIOWrapper(f_zip.open(self.path)) as f_csv:
+                data = reader(f_csv)
+                for line in data:
+                    result.append(line)
+        return result
+
+
 if __name__ == '__main__':
 
     ring = RingSort()
+    path = 'people.csv'
+    f = ReadFile(path)
 
-    with ZipFile('people.zip') as f_zip:
-        with TextIOWrapper(f_zip.open('people.csv')) as f_csv:
-            data = reader(f_csv)
-            for line in data:
-                name = line[0]
-                age = line[1]
-                ring.append(Person(name, age))
+    if f.get_type(path) == TXT:
+        data = f.read_txt()
+        for line in data:
+            line = line.strip('\n')
+            name = line.split(',')[0]
+            age = line.split(',')[1]
+            ring.append(Person(name, age))
 
-    # with open("people.csv") as f_csv:
-    #     data = reader(f_csv)
-    #     for line in data:
-    #         name = line[0]
-    #         age = line[1]
-    #         ring.append(Person(name, age))
+    if f.get_type(path) == CSV:
+        data = f.read_csv()
+        for line in data:
+            name = line[0]
+            age = line[1]
+            ring.append(Person(name, age))
 
-    # with open("people.txt") as f_txt:
-    #     for line in f_txt:
-    #         if line.count(',') != 1:
-    #             raise IOError("格式错误")
-    #         line = line.strip('\n')
-    #         name = line.split(',')[0]
-    #         age = line.split(',')[1]
-    #         ring.append(Person(name, age))
+    if f.get_type(path) == ZIP:
+        data = f.read_zip()
+        for line in data:
+            name = line[0]
+            age = line[1]
+            ring.append(Person(name, age))
 
     try:
         start = int(input("\nPlease input a starting position:"))
