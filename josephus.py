@@ -6,9 +6,9 @@
 __author__ = 'Chongsen Zhao'
 
 from csv import reader
-from zipfile import ZipFile
+from zipfile import ZipFile, ZipExtFile
 from io import TextIOWrapper
-import os
+from os.path import splitext
 
 NUMBER_IN_ZIP = 0
 
@@ -19,8 +19,8 @@ class Person:
     人的基本信息，包括姓名、年龄
 
     Attributes:
-        __name: 姓名
-        __age: 年龄
+        _name: 姓名
+        _age: 年龄
     """
     def __init__(self, name, age):
         """Inits SampleClass with blah."""
@@ -43,8 +43,8 @@ class RingSort:
     对约瑟夫环中的Person对象按照起始位置和步进依次抽取
 
     Attributes:
-        _people: 容器，元素为Person对象
-        current_id: 容器中剔除数据的索引
+        _people: 元素为Person对象的容器
+        current_id: 容器中要剔除数据的索引
         step: 步进
     """
     def __init__(self, start, step):
@@ -72,6 +72,7 @@ class RingSort:
 
     @classmethod
     def create_from_txt(cls, path):
+        """从txt文件中提取数据，创建并返回类的对象"""
         obj = cls(start, step)
         with open(path) as f_txt:
             for line in f_txt:
@@ -81,8 +82,11 @@ class RingSort:
 
     @classmethod
     def create_from_csv(cls, path):
+        """从csv文件中提取数据，创建并返回类的对象"""
         obj = cls(start, step)
         with open(path) as f_csv:
+            if isinstance(f_csv, ZipExtFile):
+                f_csv = TextIOWrapper(f_csv)
             data = reader(f_csv)
             for line in data:
                 obj.append(Person(name=line[0], age=line[1]))
@@ -90,14 +94,10 @@ class RingSort:
 
     @classmethod
     def create_from_zip(cls, path):
-        obj = cls(start, step)
+        """从zip文件中提取数据，创建并返回类的对象"""
         with ZipFile(path) as f_zip:
-            path_in_zip = f_zip.namelist()
-            with TextIOWrapper(f_zip.open(
-                    path_in_zip[NUMBER_IN_ZIP])) as f_csv:
-                data = reader(f_csv)
-                for line in data:
-                    obj.append(Person(name=line[0], age=line[1]))
+            path_in_zip = f_zip.namelist()[NUMBER_IN_ZIP]
+            obj = RingSort.create_from_csv(path_in_zip)
         return obj
 
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
             raise IndexError("Out of range!")
 
         path = 'people.zip'
-        extension_name = os.path.splitext(path)[-1]
+        extension_name = splitext(path)[-1]
 
         if extension_name == '.txt':
             ring = RingSort.create_from_txt(path)
