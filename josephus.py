@@ -6,11 +6,8 @@
 __author__ = 'Chongsen Zhao'
 
 from csv import reader
-from zipfile import ZipFile, ZipExtFile
-from io import TextIOWrapper
+from zipfile import ZipFile
 from os.path import splitext
-
-NUMBER_IN_ZIP = 0
 
 
 class Person:
@@ -37,6 +34,47 @@ class Person:
         print("name:", self._name, "\tage:", self._age)
 
 
+class FileReader:
+    """Summary of class here.
+
+    读取文件中的数据，并将数据放进列表中
+
+    Attributes:
+        path: 文件路径
+    """
+    def __init__(self, path):
+        self.path = path
+
+    def read_txt(self):
+        result = []
+        with open(self.path) as fp:
+            for line in fp:
+                lst = line.split()
+                result.append(lst)
+        return result
+
+    def read_csv(self):
+        result = []
+        with open(self.path) as fp:
+            data = reader(fp)
+            for line in data:
+                result.append(line)
+        return result
+
+    def read_zip(self, member):
+        with ZipFile(self.path) as fp:
+            file_path = fp.extract(member)
+
+            obj = FileReader(file_path)
+            extension_name = splitext(file_path)[-1]
+
+            if extension_name == '.txt':
+                return obj.read_txt()
+            if extension_name == '.csv':
+                return obj.read_csv()
+        return obj
+
+
 class RingSort:
     """Summary of class here.
 
@@ -47,11 +85,15 @@ class RingSort:
         current_id: 容器中要剔除数据的索引
         step: 步进
     """
-    def __init__(self, start, step):
+    def __init__(self, start, step, reader=None):
         """constructor."""
         self._people = []
         self.current_id = start - 1
         self.step = step
+
+        if reader:
+            for each in reader:
+                self._people.append(Person(name=each[0], age=each[1]))
 
     def append(self, target):
         """容器里添加Person对象"""
@@ -70,36 +112,6 @@ class RingSort:
         ret = self._people.pop(self.current_id)
         return ret
 
-    @classmethod
-    def create_from_txt(cls, path):
-        """从txt文件中提取数据，创建并返回类的对象"""
-        obj = cls(start, step)
-        with open(path) as f_txt:
-            for line in f_txt:
-                line = line.split()
-                obj.append(Person(name=line[0], age=line[1]))
-        return obj
-
-    @classmethod
-    def create_from_csv(cls, path):
-        """从csv文件中提取数据，创建并返回类的对象"""
-        obj = cls(start, step)
-        with open(path) as f_csv:
-            if isinstance(f_csv, ZipExtFile):
-                f_csv = TextIOWrapper(f_csv)
-            data = reader(f_csv)
-            for line in data:
-                obj.append(Person(name=line[0], age=line[1]))
-        return obj
-
-    @classmethod
-    def create_from_zip(cls, path):
-        """从zip文件中提取数据，创建并返回类的对象"""
-        with ZipFile(path) as f_zip:
-            path_in_zip = f_zip.namelist()[NUMBER_IN_ZIP]
-            obj = RingSort.create_from_csv(path_in_zip)
-        return obj
-
 
 if __name__ == '__main__':
 
@@ -113,16 +125,11 @@ if __name__ == '__main__':
             raise IndexError("Out of range!")
 
         path = 'people.zip'
-        extension_name = splitext(path)[-1]
 
-        if extension_name == '.txt':
-            ring = RingSort.create_from_txt(path)
+        target_file = FileReader(path)
+        file_data = target_file.read_zip('people.csv')
 
-        if extension_name == '.csv':
-            ring = RingSort.create_from_csv(path)
-
-        if extension_name == '.zip':
-            ring = RingSort.create_from_zip(path)
+        ring = RingSort(start, step, file_data)
 
         print("\nThe sequence after sorting is:\n")
         for i in ring:
