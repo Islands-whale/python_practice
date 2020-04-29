@@ -19,9 +19,11 @@ class Person:
         _name: 姓名
         _age: 年龄
     """
-    def __init__(self, name, age):
+    def __init__(self, name, age: int):
         """Inits SampleClass with blah."""
         self._name = name
+        if age < 0:
+            raise ValueError('Age can not be less than 0!')
         self._age = age
         # print("name:", self._name, ": constructor")
 
@@ -34,45 +36,57 @@ class Person:
         print("name:", self._name, "\tage:", self._age)
 
 
-class FileReader:
-    """Summary of class here.
+class Reader:
+    def next(self):
+        raise NotImplementedError('my next: not implemented!')
 
-    读取文件中的数据，并将数据放进列表中
 
-    Attributes:
-        path: 文件路径
-    """
+class TxtReader(Reader):
     def __init__(self, path):
         self.path = path
 
-    def read_txt(self):
-        result = []
+    def next(self) -> Person:
         with open(self.path) as fp:
             for line in fp:
                 lst = line.split()
-                result.append(lst)
-        return result
+                name = lst[0]
+                try:
+                    age = int(lst[1])
+                except ValueError:
+                    age = 0
+                yield Person(name, age)
 
-    def read_csv(self):
-        result = []
+
+class CsvReader(Reader):
+    def __init__(self, path):
+        self.path = path
+
+    def next(self) -> Person:
         with open(self.path) as fp:
-            data = reader(fp)
-            for line in data:
-                result.append(line)
-        return result
+            for line in reader(fp):
+                name = line[0]
+                try:
+                    age = int(line[1])
+                except ValueError:
+                    age = 0
+                yield Person(name, age)
 
-    def read_zip(self, member):
+
+class ZipReader:
+    def __init__(self, path, member):
+        self.path = path
+        self.member = member
+
+    def get_member(self):
         with ZipFile(self.path) as fp:
-            file_path = fp.extract(member)
-
-            obj = FileReader(file_path)
+            file_path = fp.extract(self.member)
             extension_name = splitext(file_path)[-1]
 
             if extension_name == '.txt':
-                return obj.read_txt()
+                return TxtReader(file_path)
+
             if extension_name == '.csv':
-                return obj.read_csv()
-        return obj
+                return CsvReader(file_path)
 
 
 class RingSort:
@@ -93,7 +107,7 @@ class RingSort:
 
         if reader:
             for each in reader:
-                self._people.append(Person(name=each[0], age=each[1]))
+                self._people.append(each)
 
     def append(self, target):
         """容器里添加Person对象"""
@@ -124,12 +138,17 @@ if __name__ == '__main__':
         if start <= 0 or step <= 0:
             raise IndexError("Out of range!")
 
-        path = 'people.zip'
+        file_reader = TxtReader('people.txt').next()
+        ring = RingSort(start, step, file_reader)
 
-        target_file = FileReader(path)
-        file_data = target_file.read_zip('people.csv')
+        # file_reader = CsvReader('people.csv').next()
+        # ring = RingSort(start, step, file_reader)
 
-        ring = RingSort(start, step, file_data)
+        # file_reader = ZipReader('people.zip', 'people.csv').get_member().next()
+        # ring = RingSort(start, step, file_reader)
+
+        # file_reader = ZipReader('people.zip', 'people.txt').get_member().next()
+        # ring = RingSort(start, step, file_reader)
 
         print("\nThe sequence after sorting is:\n")
         for i in ring:
