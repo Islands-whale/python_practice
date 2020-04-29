@@ -36,6 +36,23 @@ class Person:
         print("name:", self._name, "\tage:", self._age)
 
 
+class ReaderFactory:
+    strategies = {}
+
+    @classmethod
+    def get_reader(cls, type):
+        reader = cls.strategies.get(type)
+        if not reader:
+            raise ValueError(type)
+        return reader
+
+    @classmethod
+    def register_reader(cls, strategy_type, strategy):
+        if strategy_type == '':
+            raise Exception('strategyType can not be null')
+        cls.strategies[strategy_type] = strategy
+
+
 class Reader:
     def next(self):
         raise NotImplementedError('my next: not implemented!')
@@ -80,13 +97,10 @@ class ZipReader:
     def get_member(self):
         with ZipFile(self.path) as fp:
             file_path = fp.extract(self.member)
-            extension_name = splitext(file_path)[-1]
+            file_type = splitext(file_path)[-1]
 
-            if extension_name == '.txt':
-                return TxtReader(file_path)
-
-            if extension_name == '.csv':
-                return CsvReader(file_path)
+            reader = ReaderFactory.get_reader(file_type)
+            return reader(file_path).next()
 
 
 class RingSort:
@@ -127,7 +141,14 @@ class RingSort:
         return ret
 
 
+def init_strategies():
+    ReaderFactory.register_reader('.txt', TxtReader)
+    ReaderFactory.register_reader('.csv', CsvReader)
+
+
 if __name__ == '__main__':
+
+    init_strategies()
 
     try:
         start = int(input("\nPlease input a starting position:"))
@@ -138,16 +159,16 @@ if __name__ == '__main__':
         if start <= 0 or step <= 0:
             raise IndexError("Out of range!")
 
-        file_reader = TxtReader('people.txt').next()
-        ring = RingSort(start, step, file_reader)
+        # file_reader = TxtReader('people.txt').next()
+        # ring = RingSort(start, step, file_reader)
 
         # file_reader = CsvReader('people.csv').next()
         # ring = RingSort(start, step, file_reader)
 
-        # file_reader = ZipReader('people.zip', 'people.csv').get_member().next()
-        # ring = RingSort(start, step, file_reader)
+        file_reader = ZipReader('people.zip', 'people.csv').get_member()
+        ring = RingSort(start, step, file_reader)
 
-        # file_reader = ZipReader('people.zip', 'people.txt').get_member().next()
+        # file_reader = ZipReader('people.zip', 'people.txt').get_member()
         # ring = RingSort(start, step, file_reader)
 
         print("\nThe sequence after sorting is:\n")
