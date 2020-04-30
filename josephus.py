@@ -37,10 +37,12 @@ class Person:
 
 
 class ReaderFactory:
+    """工厂类"""
     strategies = {}
 
     @classmethod
     def get_reader(cls, type):
+        """类方法:通过type获取具体的策略类"""
         reader = cls.strategies.get(type)
         if not reader:
             raise ValueError(type)
@@ -48,21 +50,36 @@ class ReaderFactory:
 
     @classmethod
     def register_reader(cls, strategy_type, strategy):
+        """类方法:注册策略类型"""
         if strategy_type == '':
             raise Exception('strategyType can not be null')
         cls.strategies[strategy_type] = strategy
 
 
 class Reader:
+    """基类"""
     def next(self):
+        """定义接口"""
         raise NotImplementedError('my next: not implemented!')
 
 
 class TxtReader(Reader):
+    """Summary of class here.
+
+    从txt文件中获取数据，创建并返回Person对象
+
+    Attributes:
+        path: 文件路径
+    """
     def __init__(self, path):
+        """Constructor."""
         self.path = path
 
     def next(self) -> Person:
+        """
+        实现接口
+        生成器，获取数据返回Person对象
+        """
         with open(self.path) as fp:
             for line in fp:
                 lst = line.split()
@@ -75,10 +92,22 @@ class TxtReader(Reader):
 
 
 class CsvReader(Reader):
+    """Summary of class here.
+
+    从csv文件中获取数据，创建并返回Person对象
+
+    Attributes:
+        path: 文件路径
+    """
     def __init__(self, path):
+        """Constructor."""
         self.path = path
 
     def next(self) -> Person:
+        """
+        实现接口
+        生成器，获取数据返回Person对象
+        """
         with open(self.path) as fp:
             for line in reader(fp):
                 name = line[0]
@@ -90,11 +119,21 @@ class CsvReader(Reader):
 
 
 class ZipReader:
+    """Summary of class here.
+
+    从zip文件中获取目标文件，读取数据创建并返回Person对象
+
+    Attributes:
+        path: 文件路径
+        member: zip内的成员文件名
+    """
     def __init__(self, path, member):
+        """Constructor."""
         self.path = path
         self.member = member
 
-    def get_member(self):
+    def get_member_data(self):
+        """获取文件数据返回Person对象"""
         with ZipFile(self.path) as fp:
             file_path = fp.extract(self.member)
             file_type = splitext(file_path)[-1]
@@ -142,6 +181,7 @@ class RingSort:
 
 
 def init_strategies():
+    """初始化工厂"""
     ReaderFactory.register_reader('.txt', TxtReader)
     ReaderFactory.register_reader('.csv', CsvReader)
 
@@ -165,10 +205,10 @@ if __name__ == '__main__':
         # file_reader = CsvReader('people.csv').next()
         # ring = RingSort(start, step, file_reader)
 
-        file_reader = ZipReader('people.zip', 'people.csv').get_member()
+        file_reader = ZipReader('people.zip', 'people.csv').get_member_data()
         ring = RingSort(start, step, file_reader)
 
-        # file_reader = ZipReader('people.zip', 'people.txt').get_member()
+        # file_reader = ZipReader('people.zip', 'people.txt').get_member_data()
         # ring = RingSort(start, step, file_reader)
 
         print("\nThe sequence after sorting is:\n")
