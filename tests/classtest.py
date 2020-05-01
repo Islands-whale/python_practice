@@ -5,13 +5,15 @@
 
 __author__ = 'Chongsen Zhao'
 
+import sys
+sys.path.append('.')
+from src.josephus import Person
+from src.josephus import ReaderFactory
+from src.josephus import TxtReader
+from src.josephus import CsvReader
+from src.josephus import ZipReader
+from src.josephus import RingSort
 import unittest
-from josephus import Person
-from josephus import ReaderFactory
-from josephus import TxtReader
-from josephus import CsvReader
-from josephus import ZipReader
-from josephus import RingSort
 
 
 class TestPerson(unittest.TestCase):
@@ -35,11 +37,11 @@ class TestReaderFactory(unittest.TestCase):
 
 class TestTxtReader(unittest.TestCase):
     def test_init(self):
-        obj = TxtReader('people.txt')
-        self.assertEqual(obj.path, 'people.txt')
+        obj = TxtReader(r'requirements\people.txt')
+        self.assertEqual(obj.path, r'requirements\people.txt')
 
     def test_next(self):
-        generator = TxtReader('people.txt').next()
+        generator = TxtReader(r'requirements\people.txt').next()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')
@@ -52,11 +54,11 @@ class TestTxtReader(unittest.TestCase):
 
 class TestCsvReader(unittest.TestCase):
     def test_init(self):
-        obj = CsvReader('people.csv')
-        self.assertEqual(obj.path, 'people.csv')
+        obj = CsvReader(r'requirements\people.csv')
+        self.assertEqual(obj.path, r'requirements\people.csv')
 
     def test_next(self):
-        generator = CsvReader('people.csv').next()
+        generator = CsvReader(r'requirements\people.csv').next()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')
@@ -69,12 +71,13 @@ class TestCsvReader(unittest.TestCase):
 
 class TestZipReader(unittest.TestCase):
     def test_init(self):
-        obj = ZipReader('people.zip', 'people.txt')
-        self.assertEqual(obj.path, 'people.zip')
+        obj = ZipReader(r'requirements\people.zip', 'people.txt')
+        self.assertEqual(obj.path, r'requirements\people.zip')
         self.assertEqual(obj.member, 'people.txt')
 
     def test_get_member_data(self):
-        generator = ZipReader('people.zip', 'people.txt').get_member_data()
+        generator = ZipReader(r'requirements\people.zip',
+                              'people.txt').get_member_data()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')

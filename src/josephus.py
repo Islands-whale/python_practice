@@ -135,7 +135,7 @@ class ZipReader:
     def get_member_data(self):
         """获取文件数据返回Person对象"""
         with ZipFile(self.path) as fp:
-            file_path = fp.extract(self.member)
+            file_path = fp.extract(self.member, 'requirements')
             file_type = splitext(file_path)[-1]
 
             reader = ReaderFactory.get_reader(file_type)
@@ -199,16 +199,18 @@ if __name__ == '__main__':
         if start <= 0 or step <= 0:
             raise IndexError("Out of range!")
 
-        # file_reader = TxtReader('people.txt').next()
-        # ring = RingSort(start, step, file_reader)
-
-        # file_reader = CsvReader('people.csv').next()
-        # ring = RingSort(start, step, file_reader)
-
-        file_reader = ZipReader('people.zip', 'people.csv').get_member_data()
+        file_reader = TxtReader(r'requirements\people.txt').next()
         ring = RingSort(start, step, file_reader)
 
-        # file_reader = ZipReader('people.zip', 'people.txt').get_member_data()
+        # file_reader = CsvReader(r'requirements\people.csv').next()
+        # ring = RingSort(start, step, file_reader)
+
+        # file_reader = ZipReader(r'requirements\people.zip',
+        #                         'people.csv').get_member_data()
+        # ring = RingSort(start, step, file_reader)
+
+        # file_reader = ZipReader(r'requirements\people.zip',
+        #                         'people.txt').get_member_data()
         # ring = RingSort(start, step, file_reader)
 
         print("\nThe sequence after sorting is:\n")
