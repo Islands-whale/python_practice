@@ -6,3 +6,12 @@
 /src/.vscode/.ropeproject/objectdb
 /src/.vscode/.ropeproject/config.py
 /tests/__pycache__/classtest.cpython-37.pyc
+/src/file_reader/__pycache__/__init__.cpython-37.pyc
+/src/file_reader/__pycache__/file_reader.cpython-37.pyc
+/src/josephus/__pycache__/__init__.cpython-37.pyc
+/src/josephus/__pycache__/josephus.cpython-37.pyc
+/src/person/__pycache__/__init__.cpython-37.pyc
+/src/person/__pycache__/person.cpython-37.pyc
+/tests/file_reader/__pycache__/test_file_reader.cpython-37.pyc
+/tests/josephus/__pycache__/test_josephus.cpython-37.pyc
+/tests/person/__pycache__/test_person.cpython-37.pyc
