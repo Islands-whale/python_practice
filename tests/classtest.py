@@ -5,8 +5,6 @@
 
 __author__ = 'Chongsen Zhao'
 
-import sys
-sys.path.append('.')
 from src.josephus import Person
 from src.josephus import ReaderFactory
 from src.josephus import TxtReader
@@ -37,11 +35,11 @@ class TestReaderFactory(unittest.TestCase):
 
 class TestTxtReader(unittest.TestCase):
     def test_init(self):
-        obj = TxtReader(r'requirements\people.txt')
-        self.assertEqual(obj.path, r'requirements\people.txt')
+        obj = TxtReader(r'data\people.txt')
+        self.assertEqual(obj.path, r'data\people.txt')
 
     def test_next(self):
-        generator = TxtReader(r'requirements\people.txt').next()
+        generator = TxtReader(r'data\people.txt').next()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')
@@ -54,11 +52,11 @@ class TestTxtReader(unittest.TestCase):
 
 class TestCsvReader(unittest.TestCase):
     def test_init(self):
-        obj = CsvReader(r'requirements\people.csv')
-        self.assertEqual(obj.path, r'requirements\people.csv')
+        obj = CsvReader(r'data\people.csv')
+        self.assertEqual(obj.path, r'data\people.csv')
 
     def test_next(self):
-        generator = CsvReader(r'requirements\people.csv').next()
+        generator = CsvReader(r'data\people.csv').next()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')
@@ -71,12 +69,12 @@ class TestCsvReader(unittest.TestCase):
 
 class TestZipReader(unittest.TestCase):
     def test_init(self):
-        obj = ZipReader(r'requirements\people.zip', 'people.txt')
-        self.assertEqual(obj.path, r'requirements\people.zip')
+        obj = ZipReader(r'data\people.zip', 'people.txt')
+        self.assertEqual(obj.path, r'data\people.zip')
         self.assertEqual(obj.member, 'people.txt')
 
     def test_get_member_data(self):
-        generator = ZipReader(r'requirements\people.zip',
+        generator = ZipReader(r'data\people.zip',
                               'people.txt').get_member_data()
 
         person = generator.__next__()

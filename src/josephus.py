@@ -8,6 +8,7 @@ __author__ = 'Chongsen Zhao'
 from csv import reader
 from zipfile import ZipFile
 from os.path import splitext
+from typing import Iterator
 
 
 class Person:
@@ -38,7 +39,7 @@ class Person:
 
 class ReaderFactory:
     """工厂类"""
-    strategies = {}
+    strategies: dict = {}
 
     @classmethod
     def get_reader(cls, type):
@@ -75,7 +76,7 @@ class TxtReader(Reader):
         """Constructor."""
         self.path = path
 
-    def next(self) -> Person:
+    def next(self) -> Iterator[Person]:
         """
         实现接口
         生成器，获取数据返回Person对象
@@ -103,7 +104,7 @@ class CsvReader(Reader):
         """Constructor."""
         self.path = path
 
-    def next(self) -> Person:
+    def next(self) -> Iterator[Person]:
         """
         实现接口
         生成器，获取数据返回Person对象
@@ -135,7 +136,7 @@ class ZipReader:
     def get_member_data(self):
         """获取文件数据返回Person对象"""
         with ZipFile(self.path) as fp:
-            file_path = fp.extract(self.member, 'requirements')
+            file_path = fp.extract(self.member, 'data')
             file_type = splitext(file_path)[-1]
 
             reader = ReaderFactory.get_reader(file_type)
@@ -199,17 +200,17 @@ if __name__ == '__main__':
         if start <= 0 or step <= 0:
             raise IndexError("Out of range!")
 
-        file_reader = TxtReader(r'requirements\people.txt').next()
+        file_reader = TxtReader(r'data\people.txt').next()
         ring = RingSort(start, step, file_reader)
 
-        # file_reader = CsvReader(r'requirements\people.csv').next()
+        # file_reader = CsvReader(r'data\people.csv').next()
         # ring = RingSort(start, step, file_reader)
 
-        # file_reader = ZipReader(r'requirements\people.zip',
+        # file_reader = ZipReader(r'data\people.zip',
         #                         'people.csv').get_member_data()
         # ring = RingSort(start, step, file_reader)
 
-        # file_reader = ZipReader(r'requirements\people.zip',
+        # file_reader = ZipReader(r'data\people.zip',
         #                         'people.txt').get_member_data()
         # ring = RingSort(start, step, file_reader)
 
