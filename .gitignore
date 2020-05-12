@@ -18,3 +18,6 @@
 /tests/__pycache__/__init__.cpython-37.pyc
 /tests/file_reader/__pycache__/__init__.cpython-37.pyc
 /tests/josephus/__pycache__/__init__.cpython-37.pyc
+
+# mypy
+.mypy_cache/

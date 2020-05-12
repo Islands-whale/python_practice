@@ -9,15 +9,15 @@ from src.josephus.josephus import Person, Reader, RingSort
 from csv import reader
 from zipfile import ZipFile
 from os.path import splitext
-from typing import Iterator
+from typing import Iterator, Dict
 
 
 class ReaderFactory:
     """工厂类"""
-    strategies: dict = {}
+    strategies: Dict[str, Reader] = {}
 
     @classmethod
-    def get_reader(cls, type):
+    def get_reader(cls, type: str) -> Reader:
         """类方法:通过type获取具体的策略类"""
         reader = cls.strategies.get(type)
         if not reader:
@@ -25,7 +25,7 @@ class ReaderFactory:
         return reader
 
     @classmethod
-    def register_reader(cls, strategy_type, strategy):
+    def register_reader(cls, strategy_type: str, strategy: Reader):
         """类方法:注册策略类型"""
         if strategy_type == '':
             raise Exception('strategyType can not be null')
@@ -40,7 +40,7 @@ class TxtReader(Reader):
     Attributes:
         path: 文件路径
     """
-    def __init__(self, path):
+    def __init__(self, path: str):
         """Constructor."""
         self.path = path
 
@@ -68,7 +68,7 @@ class CsvReader(Reader):
     Attributes:
         path: 文件路径
     """
-    def __init__(self, path):
+    def __init__(self, path: str):
         """Constructor."""
         self.path = path
 
@@ -96,12 +96,12 @@ class ZipReader:
         path: 文件路径
         member: zip内的成员文件名
     """
-    def __init__(self, path, member):
+    def __init__(self, path: str, member: str):
         """Constructor."""
         self.path = path
         self.member = member
 
-    def get_member_data(self):
+    def get_member_data(self):  #
         """获取文件数据返回Person对象"""
         with ZipFile(self.path) as fp:
             file_path = fp.extract(self.member, 'data')

@@ -5,6 +5,8 @@
 
 __author__ = 'Chongsen Zhao'
 
+from typing import Iterator
+
 
 class Person:
     """Summary of class here.
@@ -15,7 +17,7 @@ class Person:
         _name: 姓名
         _age: 年龄
     """
-    def __init__(self, name, age: int):
+    def __init__(self, name: str, age: int):
         """Inits SampleClass with blah."""
         self._name = name
         if age < 0:
@@ -49,7 +51,7 @@ class RingSort:
         current_id: 容器中要剔除数据的索引
         step: 步进
     """
-    def __init__(self, start, step, reader=None):
+    def __init__(self, start: int, step: int, reader: Iterator[Person] = None):
         """constructor."""
         self._people = []
         self.current_id = start - 1
@@ -59,7 +61,7 @@ class RingSort:
             for each in reader:
                 self._people.append(each)
 
-    def append(self, target):
+    def append(self, target: Person):
         """容器里添加Person对象"""
         self._people.append(target)
 
@@ -67,7 +69,7 @@ class RingSort:
         """返回迭代器"""
         return self
 
-    def __next__(self):
+    def __next__(self) -> Person:
         """返回下一个要抽取的Person对象"""
         if len(self._people) == 0:
             raise StopIteration
