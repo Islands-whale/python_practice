@@ -6,27 +6,28 @@
 __author__ = 'Chongsen Zhao'
 
 import unittest
-from src.file_reader import file_reader as fil
+from src.file_reader.file_reader import ReaderFactory
+from src.file_reader.file_reader import TxtReader, CsvReader, ZipReader
 
 
 class TestReaderFactory(unittest.TestCase):
     def test_register_reader(self):
-        fil.ReaderFactory.register_reader('.txt', fil.TxtReader)
-        self.assertEqual(fil.ReaderFactory.strategies['.txt'], fil.TxtReader)
+        ReaderFactory.register_reader('.txt', TxtReader)
+        self.assertEqual(ReaderFactory.strategies['.txt'], TxtReader)
 
     def test_get_reader(self):
-        fil.ReaderFactory.register_reader('.txt', fil.TxtReader)
-        reader = fil.ReaderFactory.get_reader('.txt')
-        self.assertEqual(reader, fil.TxtReader)
+        ReaderFactory.register_reader('.txt', TxtReader)
+        reader = ReaderFactory.get_reader('.txt')
+        self.assertEqual(reader, TxtReader)
 
 
 class TestTxtReader(unittest.TestCase):
     def test_init(self):
-        obj = fil.TxtReader(r'data\people.txt')
+        obj = TxtReader(r'data\people.txt')
         self.assertEqual(obj.path, r'data\people.txt')
 
     def test_next(self):
-        generator = fil.TxtReader(r'data\people.txt').next()
+        generator = TxtReader(r'data\people.txt').next()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')
@@ -39,11 +40,11 @@ class TestTxtReader(unittest.TestCase):
 
 class TestCsvReader(unittest.TestCase):
     def test_init(self):
-        obj = fil.CsvReader(r'data\people.csv')
+        obj = CsvReader(r'data\people.csv')
         self.assertEqual(obj.path, r'data\people.csv')
 
     def test_next(self):
-        generator = fil.CsvReader(r'data\people.csv').next()
+        generator = CsvReader(r'data\people.csv').next()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')
@@ -56,13 +57,13 @@ class TestCsvReader(unittest.TestCase):
 
 class TestZipReader(unittest.TestCase):
     def test_init(self):
-        obj = fil.ZipReader(r'data\people.zip', 'people.txt')
+        obj = ZipReader(r'data\people.zip', 'people.txt')
         self.assertEqual(obj.path, r'data\people.zip')
         self.assertEqual(obj.member, 'people.txt')
 
     def test_get_member_data(self):
-        generator = fil.ZipReader(r'data\people.zip',
-                                  'people.txt').get_member_data()
+        generator = ZipReader(r'data\people.zip',
+                              'people.txt').get_member_data()
 
         person = generator.__next__()
         self.assertEqual(person._name, 'Jorn')

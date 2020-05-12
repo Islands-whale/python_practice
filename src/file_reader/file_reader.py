@@ -5,8 +5,7 @@
 
 __author__ = 'Chongsen Zhao'
 
-from src.person import person as per
-from src.josephus import josephus as jos
+from src.josephus.josephus import Person, Reader, RingSort
 from csv import reader
 from zipfile import ZipFile
 from os.path import splitext
@@ -33,7 +32,7 @@ class ReaderFactory:
         cls.strategies[strategy_type] = strategy
 
 
-class TxtReader(jos.Reader):
+class TxtReader(Reader):
     """Summary of class here.
 
     从txt文件中获取数据，创建并返回Person对象
@@ -45,7 +44,7 @@ class TxtReader(jos.Reader):
         """Constructor."""
         self.path = path
 
-    def next(self) -> Iterator[per.Person]:
+    def next(self) -> Iterator[Person]:
         """
         实现接口
         生成器，获取数据返回Person对象
@@ -58,10 +57,10 @@ class TxtReader(jos.Reader):
                     age = int(lst[1])
                 except ValueError:
                     age = 0
-                yield per.Person(name, age)
+                yield Person(name, age)
 
 
-class CsvReader(jos.Reader):
+class CsvReader(Reader):
     """Summary of class here.
 
     从csv文件中获取数据，创建并返回Person对象
@@ -73,7 +72,7 @@ class CsvReader(jos.Reader):
         """Constructor."""
         self.path = path
 
-    def next(self) -> Iterator[per.Person]:
+    def next(self) -> Iterator[Person]:
         """
         实现接口
         生成器，获取数据返回Person对象
@@ -85,7 +84,7 @@ class CsvReader(jos.Reader):
                     age = int(line[1])
                 except ValueError:
                     age = 0
-                yield per.Person(name, age)
+                yield Person(name, age)
 
 
 class ZipReader:
@@ -132,18 +131,18 @@ if __name__ == '__main__':
             raise IndexError("Out of range!")
 
         file_reader = TxtReader(r'data\people.txt').next()
-        ring = jos.RingSort(start, step, file_reader)
+        ring = RingSort(start, step, file_reader)
 
         # file_reader = CsvReader(r'data\people.csv').next()
-        # ring = jos.RingSort(start, step, file_reader)
+        # ring = RingSort(start, step, file_reader)
 
         # file_reader = ZipReader(r'data\people.zip',
         #                         'people.csv').get_member_data()
-        # ring = jos.RingSort(start, step, file_reader)
+        # ring = RingSort(start, step, file_reader)
 
         # file_reader = ZipReader(r'data\people.zip',
         #                         'people.txt').get_member_data()
-        # ring = jos.RingSort(start, step, file_reader)
+        # ring = RingSort(start, step, file_reader)
 
         print("\nThe sequence after sorting is:\n")
         for i in ring:
