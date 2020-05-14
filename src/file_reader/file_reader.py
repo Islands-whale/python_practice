@@ -5,6 +5,7 @@
 
 __author__ = 'Chongsen Zhao'
 
+import curses
 from src.josephus.josephus import Person, Reader, RingSort
 from csv import reader
 from zipfile import ZipFile
@@ -120,12 +121,22 @@ def init_strategies():
 if __name__ == '__main__':
 
     init_strategies()
+    screen = curses.initscr()
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    cursor_y = 3
 
     try:
-        start = int(input("\nPlease input a starting position:"))
-        step = int(input("Please input a step number:"))
+        screen.addstr(0, 0, "Please input a starting position:",
+                      curses.color_pair(1))
+        start = int(screen.getstr())
+        screen.addstr(1, 0, "Please input a step number:",
+                      curses.color_pair(1))
+        step = int(screen.getstr())
     except ValueError:
-        print("\nPlease input an integer!")
+        print("Please input integer!")
     else:
         if start <= 0 or step <= 0:
             raise IndexError("Out of range!")
@@ -144,8 +155,15 @@ if __name__ == '__main__':
         #                         'people.txt').get_member_data()
         # ring = RingSort(start, step, file_reader)
 
-        print("\nThe sequence after sorting is:\n")
+        screen.addstr(3, 0, "The sequence after sorting is:",
+                      curses.color_pair(2))
         for i in ring:
-            i.print_data()
-
-# *=====End File=====* #
+            cursor_y += 1
+            screen.addstr(cursor_y, 0, i.get_information(),
+                          curses.color_pair(2))
+    finally:
+        screen.addstr(curses.LINES - 1, 0,
+                      "Please press any key to continue...",
+                      curses.color_pair(3))
+        screen.getkey()
+        curses.endwin()

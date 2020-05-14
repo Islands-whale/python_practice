@@ -29,9 +29,10 @@ class Person:
     #     """Destructor."""
     #     print("name:", self._name, ": destructor")
 
-    def print_data(self):
-        """Export person information."""
-        print("name:", self._name, "\tage:", self._age)
+    def get_information(self) -> str:
+        """Get person information."""
+        information = 'name:' + self._name + '\tage:' + str(self._age)
+        return information
 
 
 class Reader:
