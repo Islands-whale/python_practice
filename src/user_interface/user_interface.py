@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel,
-                             QInputDialog, QMessageBox)
+                             QInputDialog, QMessageBox, QTextBrowser)
 from src.josephus.josephus import RingSort
 from src.file_reader.file_reader import TxtReader, CsvReader, ZipReader
 
@@ -37,17 +37,8 @@ class RingGraphicInterface(QWidget):
         self.ok_button = QPushButton('OK', self)
         self.ok_button.move(100, 100)
 
-        self.data1 = QLabel(' ' * 30, self)
-        self.data1.move(20, 150)
-
-        self.data2 = QLabel(' ' * 30, self)
-        self.data2.move(20, 170)
-
-        self.data3 = QLabel(' ' * 30, self)
-        self.data3.move(20, 190)
-
-        self.data4 = QLabel(' ' * 30, self)
-        self.data4.move(20, 210)
+        self.show_data = QTextBrowser(self)
+        self.show_data.move(20, 150)
 
         self.show()
 
@@ -78,18 +69,12 @@ class RingGraphicInterface(QWidget):
             self.show_ring()
 
     def show_ring(self):
-        # self.aaaaa.setText(str(self.start))
-        result = []
         file_reader = TxtReader(r'data\people.txt').next()
         ring = RingSort(self.start, self.step, file_reader)
 
+        self.show_data.clear()
         for i in ring:
-            result.append(i.get_information())
-
-        self.data1.setText(result[0])
-        self.data2.setText(result[1])
-        self.data3.setText(result[2])
-        self.data4.setText(result[3])
+            self.show_data.append(i.get_information())
 
 
 if __name__ == '__main__':
