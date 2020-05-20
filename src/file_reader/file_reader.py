@@ -112,15 +112,13 @@ class ZipReader:
             return reader(file_path).next()
 
 
-def init_strategies():
-    """初始化工厂"""
-    ReaderFactory.register_reader('.txt', TxtReader)
-    ReaderFactory.register_reader('.csv', CsvReader)
+"""初始化工厂"""
+ReaderFactory.register_reader('.txt', TxtReader)
+ReaderFactory.register_reader('.csv', CsvReader)
 
 
 if __name__ == '__main__':
 
-    init_strategies()
     screen = curses.initscr()
     curses.start_color()
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
