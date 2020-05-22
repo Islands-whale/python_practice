@@ -5,8 +5,6 @@
 
 __author__ = 'Chongsen Zhao'
 
-from typing import Iterator
-
 
 class Person:
     """Summary of class here.
@@ -36,10 +34,12 @@ class Person:
 
 
 class Reader:
-    """基类"""
-    def next(self):
-        """定义接口"""
-        raise NotImplementedError('my next: not implemented!')
+    """基类，定义接口"""
+    def __iter__(self):
+        raise NotImplementedError('my __iter__: not implemented!')
+
+    def __next__(self):
+        raise NotImplementedError('my __next__: not implemented!')
 
 
 class RingSort:
@@ -52,7 +52,7 @@ class RingSort:
         current_id: 容器中要剔除数据的索引
         step: 步进
     """
-    def __init__(self, start: int, step: int, reader: Iterator[Person] = None):
+    def __init__(self, start: int, step: int, reader=None):
         """constructor."""
         self._people = []
         self.current_id = start - 1

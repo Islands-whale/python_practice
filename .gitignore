@@ -23,3 +23,9 @@
 .mypy_cache/
 
 /.vscode/settings.json
+/__pycache__/test.cpython-37.pyc
+/src/user_interface/__pycache__/__init__.cpython-37.pyc
+/src/user_interface/__pycache__/user_interface.cpython-37.pyc
+/src/user_interface/__pycache__/call_qt_graphic_interface.cpython-37.pyc
+/src/user_interface/__pycache__/qt_graphic_interface.cpython-37.pyc
+/src/user_interface/__pycache__/text_interface.cpython-37.pyc

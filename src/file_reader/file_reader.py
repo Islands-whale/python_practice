@@ -5,12 +5,11 @@
 
 __author__ = 'Chongsen Zhao'
 
-import curses
-from src.josephus.josephus import Person, Reader, RingSort
+from src.josephus.josephus import Person, Reader
 from csv import reader
 from zipfile import ZipFile
 from os.path import splitext
-from typing import Iterator, Dict
+from typing import Dict
 
 
 class ReaderFactory:
@@ -21,8 +20,6 @@ class ReaderFactory:
     def get_reader(cls, type: str) -> Reader:
         """类方法:通过type获取具体的策略类"""
         reader = cls.strategies.get(type)
-        if not reader:
-            raise ValueError(type)
         return reader
 
     @classmethod
@@ -44,21 +41,35 @@ class TxtReader(Reader):
     def __init__(self, path: str):
         """Constructor."""
         self.path = path
+        self.open_temp = True
+        self.fp = None
 
-    def next(self) -> Iterator[Person]:
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         """
-        实现接口
-        生成器，获取数据返回Person对象
+        实现接口，获取数据返回Person对象
         """
-        with open(self.path) as fp:
-            for line in fp:
-                lst = line.split()
-                name = lst[0]
-                try:
-                    age = int(lst[1])
-                except ValueError:
-                    age = 0
-                yield Person(name, age)
+        try:
+            if self.open_temp:
+                self.fp = open(self.path)
+                self.open_temp = False
+        except Exception:
+            return None
+        else:
+            line = next(self.fp)
+            if not line:
+                self.fp.close()
+                self.open_temp = True
+                raise StopIteration
+            lst = line.split()
+            name = lst[0]
+            try:
+                age = int(lst[1])
+            except ValueError:
+                age = 0
+            return Person(name, age)
 
 
 class CsvReader(Reader):
@@ -72,20 +83,35 @@ class CsvReader(Reader):
     def __init__(self, path: str):
         """Constructor."""
         self.path = path
+        self.open_temp = True
+        self.fp = None
 
-    def next(self) -> Iterator[Person]:
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         """
         实现接口
         生成器，获取数据返回Person对象
         """
-        with open(self.path) as fp:
-            for line in reader(fp):
-                name = line[0]
-                try:
-                    age = int(line[1])
-                except ValueError:
-                    age = 0
-                yield Person(name, age)
+        try:
+            if self.open_temp:
+                self.fp = open(self.path)
+                self.open_temp = False
+        except Exception:
+            return None
+        else:
+            line = next(reader(self.fp))
+            if not line:
+                self.fp.close()
+                self.open_temp = True
+                raise StopIteration
+            name = line[0]
+            try:
+                age = int(line[1])
+            except ValueError:
+                age = 0
+            return Person(name, age)
 
 
 class ZipReader:
@@ -102,66 +128,19 @@ class ZipReader:
         self.path = path
         self.member = member
 
-    def get_member_data(self):  #
+    def next(self):  #
         """获取文件数据返回Person对象"""
-        with ZipFile(self.path) as fp:
-            file_path = fp.extract(self.member, 'data')
-            file_type = splitext(file_path)[-1]
+        try:
+            with ZipFile(self.path) as fp:
+                file_path = fp.extract(self.member, 'data')
+                file_type = splitext(file_path)[-1]
 
-            reader = ReaderFactory.get_reader(file_type)
-            return reader(file_path).next()
+                reader = ReaderFactory.get_reader(file_type)
+                return reader(file_path)
+        except Exception:
+            return None
 
 
 """初始化工厂"""
 ReaderFactory.register_reader('.txt', TxtReader)
 ReaderFactory.register_reader('.csv', CsvReader)
-
-
-if __name__ == '__main__':
-
-    screen = curses.initscr()
-    curses.start_color()
-    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    cursor_y = 3
-
-    try:
-        screen.addstr(0, 0, "Please input a starting position:",
-                      curses.color_pair(1))
-        start = int(screen.getstr())
-        screen.addstr(1, 0, "Please input a step number:",
-                      curses.color_pair(1))
-        step = int(screen.getstr())
-    except ValueError:
-        print("Please input integer!")
-    else:
-        if start <= 0 or step <= 0:
-            raise IndexError("Out of range!")
-
-        file_reader = TxtReader(r'data\people.txt').next()
-        ring = RingSort(start, step, file_reader)
-
-        # file_reader = CsvReader(r'data\people.csv').next()
-        # ring = RingSort(start, step, file_reader)
-
-        # file_reader = ZipReader(r'data\people.zip',
-        #                         'people.csv').get_member_data()
-        # ring = RingSort(start, step, file_reader)
-
-        # file_reader = ZipReader(r'data\people.zip',
-        #                         'people.txt').get_member_data()
-        # ring = RingSort(start, step, file_reader)
-
-        screen.addstr(3, 0, "The sequence after sorting is:",
-                      curses.color_pair(2))
-        for i in ring:
-            cursor_y += 1
-            screen.addstr(cursor_y, 0, i.get_information(),
-                          curses.color_pair(2))
-    finally:
-        screen.addstr(curses.LINES - 1, 0,
-                      "Please press any key to continue...",
-                      curses.color_pair(3))
-        screen.getkey()
-        curses.endwin()
