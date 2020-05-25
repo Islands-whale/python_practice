@@ -47,7 +47,7 @@ class RingSort:
 
     def __next__(self) -> Person:
         """返回下一个要抽取的Person对象"""
-        if len(self._people) == 0:
+        if len(self) == 0:
             raise StopIteration
 
         self.current_id = (self.current_id + self.step - 1) % len(self._people)
