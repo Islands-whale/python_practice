@@ -7,8 +7,8 @@ __author__ = 'Chongsen Zhao'
 
 import unittest
 import os.path
-from src.adapters.file_reader import (ReaderFactory, TxtReader, CsvReader,
-                                      ZipReader)
+from src.user_interface.file_reader import (ReaderFactory, TxtReader,
+                                            CsvReader, ZipReader)
 
 
 class TestReaderFactory(unittest.TestCase):

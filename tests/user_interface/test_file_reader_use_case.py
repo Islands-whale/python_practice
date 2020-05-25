@@ -6,8 +6,8 @@
 __author__ = 'Chongsen Zhao'
 
 import unittest
-from src.adapters.file_reader_use_case import FileReader
-from src.adapters.file_reader import TxtReader
+from src.user_interface.file_reader_use_case import FileReader
+from src.user_interface.file_reader import TxtReader
 
 
 class TestFileReader(unittest.TestCase):
