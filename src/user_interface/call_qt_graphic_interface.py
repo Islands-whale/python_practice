@@ -2,8 +2,8 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QFileDialog, QInputDialog,
                              QMessageBox)
 from src.user_interface.qt_graphic_interface import QtUiForm
-from src.adapters.file_reader import ZipReader
-from src.adapters.file_reader_use_case import FileReader
+from src.user_interface.file_reader import ZipReader
+from src.user_interface.file_reader_use_case import FileReader
 from src.use_cases.josephus_use_case import JosephusUseCase
 
 

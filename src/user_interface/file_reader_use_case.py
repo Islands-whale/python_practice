@@ -6,7 +6,7 @@
 __author__ = 'Chongsen Zhao'
 
 import os.path
-from src.adapters.file_reader import ReaderFactory, ZipReader
+from src.user_interface.file_reader import ReaderFactory, ZipReader
 
 
 class FileReader:

@@ -45,3 +45,8 @@
 /tests/domain/__pycache__/test_person.cpython-37.pyc
 /tests/use_cases/__pycache__/__init__.cpython-37.pyc
 /tests/use_cases/__pycache__/test_josephus_use_case.cpython-37.pyc
+/src/user_interface/__pycache__/file_reader.cpython-37.pyc
+/src/user_interface/__pycache__/file_reader_use_case.cpython-37.pyc
+/tests/user_interface/__pycache__/__init__.cpython-37.pyc
+/tests/user_interface/__pycache__/test_file_reader.cpython-37.pyc
+/tests/user_interface/__pycache__/test_file_reader_use_case.cpython-37.pyc
