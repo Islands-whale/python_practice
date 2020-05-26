@@ -23,10 +23,10 @@ class TestFileReader(unittest.TestCase):
         self.assertFalse(FileReader('datapeople.txt').check_path())
         self.assertFalse(FileReader('datapeople').check_path())
 
-    def test_check_type(self):
-        self.assertTrue(FileReader(r'data\people.zip').check_type())
-        self.assertFalse(FileReader(r'data\people.txt').check_type())
-        self.assertFalse(FileReader(r'data\people.csv').check_type())
+    def test_check_zip(self):
+        self.assertTrue(FileReader(r'data\people.zip').check_zip())
+        self.assertFalse(FileReader(r'data\people.txt').check_zip())
+        self.assertFalse(FileReader(r'data\people.csv').check_zip())
 
     def test_from_zip(self):
         self.assertFalse(FileReader(r'data\people.zip').from_zip('people.tt'))

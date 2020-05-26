@@ -29,7 +29,7 @@ class UiForm(QWidget, QtUiForm):
             QMessageBox.critical(self, '错误', '文件路径错误，请重新选择！', QMessageBox.Yes)
 
         else:
-            yes = FileReader(path).check_type()
+            yes = FileReader(path).check_zip()
             if yes:
                 members = ZipReader.get_file_list(path)
                 current_file, ok = QInputDialog.getItem(
