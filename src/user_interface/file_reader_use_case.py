@@ -22,7 +22,7 @@ class FileReader:
 
         return bool(self.reader(self.path))
 
-    def check_type(self):
+    def check_zip(self):
         return self.type == '.zip'
 
     def from_zip(self, member):
